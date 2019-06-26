@@ -20,18 +20,6 @@ class SQLighter:
 	def __exit__(self, Type, Value, Trace):
 		self.close()
 	
-	def in_mega_list(self, uid):
-		q = "SELECT uid FROM mega_list"
-		with self.connection:
-			r = [i[0] for i in self.cursor.execute(q).fetchall()]
-			return uid in r
-
-	def add_to_mega_list(self, uid):
-		q = "INSERT INTO mega_list VALUES (null, ?)"
-		with self.connection:
-			self.cursor.execute(q, (uid,))
-
-
 	def get_buttons(self, step, *, lang=None):
 		with self.connection:
 			if lang is None:
@@ -92,8 +80,6 @@ class SQLighter:
 			return ret_value
 	
 	def set_lang(self, uid, lang):
-		if config.TEST_CONFIG:
-			print("TEST_CONFIG: User lang set to {0}".format(lang))
 		with self.connection:
 			q = "UPDATE user SET language = ? WHERE uid = ?"
 			self.cursor.execute(q, (lang, uid))
@@ -176,10 +162,13 @@ class SQLighter:
 	
 	def get_products(self, lang):
 		with self.connection:
-			q = "SELECT dir_name_{0} FROM catalog WHERE deleted = 0".format(lang)
-			res = self.cursor.execute(q).fetchall()
-			res = [j for i in res for j in i]
-			return res
+			try:
+				q = "SELECT dir_name_{0} FROM catalog WHERE deleted = 0".format(lang)
+				res = self.cursor.execute(q).fetchall()
+				res = [j for i in res for j in i]
+				return res
+			except sqlite3.OperationalError:
+				return []
 		
 	def get_caption(self, product, lang):
 		with self.connection:
@@ -400,9 +389,15 @@ class SQLighter:
 			q = "UPDATE price_list SET file_id = ? WHERE price_name_ru = ?"
 			self.cursor.execute(q, (file_id, name))
 			
-	def get_user_ids(self):
+	def get_user_ids(self, date=None):
 		with self.connection:
-			q = "SELECT uid FROM user"
-			res = self.cursor.execute(q).fetchall()
-			res = [i[0] for i in res]
-			return res
+			if date is None:
+				q = "SELECT uid FROM user"
+				res = self.cursor.execute(q).fetchall()
+				res = [i[0] for i in res]
+				return res
+			else:
+				q = "SELECT uid FROM user WHERE date=?"
+				res = self.cursor.execute(q, (date,)).fetchall()
+				res = [i[0] for i in res]
+				return res

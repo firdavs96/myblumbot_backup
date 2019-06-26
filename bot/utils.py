@@ -136,6 +136,8 @@ def round_height(height):
 
 
 def is_in_catalog(product, lang):
+	if lang not in config.languages:
+		return False
 	with SQLighter() as db:
 		return product in db.get_products(lang)
 	
