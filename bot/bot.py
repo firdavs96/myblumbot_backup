@@ -8,7 +8,6 @@ from utils import state
 from utils import log
 from markup import markup
 from sqlighter import SQLighter
-import cherrypy
 import sys
 import excel
 import os
@@ -544,8 +543,6 @@ def handle_admin_message(message):
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
 
 
-
-
 # TODO Обработка файлов
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'post_menu',
@@ -660,8 +657,12 @@ def document_handler(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
+def is_in_main_menu_state(m):
+	return state(str(m.from_user.id)) == 'main_menu'
+
+
 # TODO Обработка кнопок главного меню
-@bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'main_menu')
+@bot.message_handler(func=is_in_main_menu_state)
 def handle_main_menu(message):
 	with SQLighter() as db, Shelver().conn as states:
 		uid = str(message.from_user.id)
@@ -1343,5 +1344,4 @@ def asd(message):
 
 
 if __name__ == "__main__":
-	bot.remove_webhook()
 	bot.polling(none_stop=True)
