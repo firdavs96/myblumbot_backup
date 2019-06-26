@@ -11,7 +11,7 @@ def get_fullname_username(message) -> (str, str):
 	fullname = message.from_user.first_name
 	if message.from_user.last_name is not None:
 		fullname += " " + message.from_user.last_name
-	
+
 	username = "" if message.from_user.username is None else message.from_user.username
 	return fullname, username
 
@@ -47,46 +47,46 @@ def compute_height(aventos, *args):
 	if aventos == 'AVENTOS HF':
 		height = args[0]
 		return int(height * 0.3 - 57)
-	
+
 
 def compute_x_y(aventos, a, b, c, d, e, f, lever_value=None):
 	if aventos == 'AVENTOS HF':
 		x = e / 2 + 47
 		y = d - (c - f) / 2 + 12.5
 		return x, y
-	
+
 	if aventos == 'AVENTOS HS':
 		x = (d - (b - e) / 2) + 196.5
 		y = (d - (c - f) / 2) + 12.5
 		return x, y
-	
+
 	if aventos == 'AVENTOS HL':
 		if lever_value is None:
 			raise Exception("Need correct lever value for HL mechnism")
 		for i in lever_value:
 			if i not in config.hl_lever_values_for_x_y.values():
 				raise Exception("Need correct lever value for HL mechnism")
-			
+
 		lever_values = lever_value
 		x = [d - (b - e) / 2 + lever_value for lever_value in lever_values]
 		y = [(d - (c - f) / 2) + 12.5 for _ in range(len(x))]
 		return x, y
-	
+
 	if aventos == 'AVENTOS HK':
 		x = 69 - (b - e) / 2
 		y = d - (c - f) / 2 + 12.5
 		return x, y
-	
+
 	if aventos == 'AVENTOS HK-S':
-		x = 78 - (b-e)/2
+		x = 78 - (b - e) / 2
 		y = d - (c - f) / 2 + 12.5
 		return x, y
-	
+
 	if aventos == 'AVENTOS HK-XS':
 		x = [d - (b - e) / 2 + i for i in [125.5, 135, 143.5]]
 		y = d - (c - f) / 2 + 15.5
 		return x, y
-	
+
 	if aventos == 'AVENTOS HK-XS TIP-ON':
 		x = [d - (b - e) / 2 + i for i in [125.5, 135, 143.5]]
 		y = d - (c - f) / 2 + 15.5
@@ -131,7 +131,7 @@ def round_height(height):
 			last_digit = 5
 		elif last_digit in (2, 1):
 			last_digit = 0
-			
+
 		return int(str(first_two_digit) + str(last_digit))
 
 
@@ -140,16 +140,19 @@ def is_in_catalog(product, lang):
 		return False
 	with SQLighter() as db:
 		return product in db.get_products(lang)
-	
+
+
 def get_type_in_states(states):
 	for type in config.posting_file_types:
 		if type in states:
 			return type
 	return None
-	
+
+
 def user_blocked_bot(uid):
 	with SQLighter() as db:
 		db.user_blocked_bot(uid)
+
 
 def user_unblocked_bot(uid):
 	with SQLighter() as db:
