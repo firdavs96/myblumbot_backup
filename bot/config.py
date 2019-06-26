@@ -12,10 +12,10 @@ if TEST_CONFIG:
 	users_excel_filename = "../users.xlsx"
 else:
 	token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'
-	database_name = '/usr/share/nginx/html/BlumUz/BlumUz.db'
+	database_name = '/usr/share/apps/bots/myblumbot/BlumUz.db'
 	bot_name = '@MyBlumBot'
-	shelve_name = '/usr/share/nginx/html/BlumUz/Bot/States/{0}_user_states'.format(bot_name[1:])
-	users_excel_filename = "/usr/share/nginx/html/BlumUz/users.xlsx"
+	shelve_name = '/usr/share/apps/bots/myblumbot/bot/States/{0}_user_states'.format(bot_name[1:])
+	users_excel_filename = "/usr/share/apps/bots/myblumbot/users.xlsx"
 
 languages = {'ru', 'uz'}
 density = {'MДФ 18': 760, 'МДФ 16': 760, 'ДСП 18': 680, 'ДСП 16': 680,
