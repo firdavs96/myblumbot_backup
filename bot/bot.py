@@ -111,8 +111,13 @@ def banned(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
+def not_in_states_filter(m):
+	with Shelver().conn as states:
+		return str(m.from_user.id) not in states
+
+
 # TODO хэндлер на случай, если пользователя нету в состояних
-@bot.message_handler(func=lambda m: str(m.from_user.id) not in Shelver().conn)
+@bot.message_handler(func=not_in_states_filter)
 def first_handler(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
@@ -172,11 +177,15 @@ def first_menu(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
+def lang_menu_filter_2(m):
+	with SQLighter() as db, Shelver().conn as states:
+		user_id = str(m.from_user.id)
+		return db.has_user(user_id) and not db.has_phone(user_id) and not_in_states_filter(m)
+
+
 # TODO Меню выбора языка. Выводит запрос контакта.
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'lang_menu')
-@bot.message_handler(func=lambda m: SQLighter().has_user(str(m.from_user.id))
-									and not SQLighter().has_phone(str(m.from_user.id))
-									and str(m.from_user.id) not in Shelver().conn)
+@bot.message_handler(func=lang_menu_filter_2)
 def lang_menu(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
@@ -311,13 +320,17 @@ def phone_menu(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
+def main_menu_filter(m):
+	with SQLighter() as db:
+		user_id = str(m.from_user.id)
+		return db.has_user(user_id) and db.has_phone(user_id) and not_in_states_filter(m)
+
+
 # TODO Выводит стартовое меню
 @bot.message_handler(func=lambda m: utils.get_lang(str(m.from_user.id)) in config.languages
 									and m.text == '/start')
 @bot.message_handler(func=lambda m: m.text in SQLighter().get_buttons('main_menu_button'))
-@bot.message_handler(func=lambda m: SQLighter().has_user(str(m.from_user.id))
-									and SQLighter().has_phone(str(m.from_user.id))
-									and str(m.from_user.id) not in Shelver().conn)
+@bot.message_handler(func=main_menu_filter)
 def main_menu(message):
 	with SQLighter() as db, Shelver().conn as states:
 		uid = str(message.from_user.id)
@@ -529,6 +542,8 @@ def handle_admin_message(message):
 			m = markup(db, states[uid]['cur'], lang='ru')
 			text = db.get_message('select_price_list', lang=lang)
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
+
+
 
 
 # TODO Обработка файлов
