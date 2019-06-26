@@ -847,7 +847,7 @@ def handle_first_catalog_menu(message):
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'recomendation_menu'
 									and m.text in SQLighter().get_buttons('full_instruction_button',
 																		  lang=SQLighter().get_lang(str(m.from_user.id)))
-									and SQLighter().has_instruction(Shelver().conn[str(m.from_user.id)]['aventos'],
+									and SQLighter().has_instruction(Shelver().conn.get(str(m.from_user.id), {})['aventos'],
 																	lang=SQLighter().get_lang(str(m.from_user.id))))
 @bot.message_handler(func=lambda m: SQLighter().has_instruction(Shelver().conn[str(m.from_user.id)]['cur'],
 																lang=SQLighter().get_lang(str(m.from_user.id)))
