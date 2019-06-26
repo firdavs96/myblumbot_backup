@@ -17,7 +17,7 @@ else:
 	bot_name = '@MyBlumBot'
 	shelve_name = '/usr/share/nginx/html/BlumUz/Bot/States/{0}_user_states'.format(bot_name[1:])
 	users_excel_filename = "/usr/share/nginx/html/BlumUz/users.xlsx"
-	is_webhook = True
+	is_webhook = False
 
 languages = {'ru', 'uz'}
 density = {'MДФ 18': 760, 'МДФ 16': 760, 'ДСП 18': 680, 'ДСП 16': 680,
