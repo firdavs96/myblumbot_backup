@@ -1,6 +1,6 @@
 # -*-coding: utf-8 -*-
 
-TEST_CONFIG = 1
+TEST_CONFIG = 0
 
 if TEST_CONFIG:
 	token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8' # @BlumUz_bot
