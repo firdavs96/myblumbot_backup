@@ -849,7 +849,7 @@ def handle_first_catalog_menu(message):
 def full_instruction_filter_1(m):
 	user_id = str(m.from_user.id)
 	with SQLighter() as db, Shelver().conn as states:
-		if 'aventos' not in states.get(user_id):
+		if states.get(user_id) and 'aventos' not in states.get(user_id):
 			return False
 		user_lang = db.get_lang(user_id)
 		s = state(user_id)
@@ -861,7 +861,7 @@ def full_instruction_filter_1(m):
 def full_instruction_filter_2(m):
 	user_id = str(m.from_user.id)
 	with SQLighter() as db, Shelver().conn as states:
-		if 'cur' not in states.get(user_id):
+		if states.get(user_id) and 'cur' not in states.get(user_id):
 			return False
 		user_lang = db.get_lang(user_id)
 		has_instr = SQLighter().has_instruction(states[user_id]['cur'], lang=user_lang)
