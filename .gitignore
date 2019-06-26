@@ -1,5 +1,10 @@
-*db
 logs/
 venv/
 *xlsx
+.idea/
 __pycache__/
+States/
+*.db
+*Media/
+*venv_ubuntu/
+*myenv/
