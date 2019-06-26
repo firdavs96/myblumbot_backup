@@ -17,7 +17,6 @@ import time
 
 bot = telebot.TeleBot(config.token)
 
-
 def post(messages, user_list):
 	print("Рассылка начата")
 	for uid in user_list:
@@ -1305,35 +1304,7 @@ def asd(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-if config.TEST_CONFIG:
-	if __name__ == "__main__":
-		bot.remove_webhook()
-		bot.polling(none_stop=True)
-else:
-	if config.is_webhook:
-		class WebhookServer(object):
-			@cherrypy.expose
-			def index(self):
-				length = int(cherrypy.request.headers['content-length'])
-				json_string = cherrypy.request.body.read(length).decode("utf-8")
-				update = telebot.types.Update.de_json(json_string)
-				bot.process_new_updates([update])
-				return ''
-		
-		
-		if __name__ == '__main__':
-			bot.remove_webhook()
-			# TODO change url
-			bot.set_webhook("".format(config.token))
-			
-			cherrypy.config.update({
-				'server.socket_host': '127.0.0.1',
-				'server.socket_port': 7796,
-				'engine.autoreload.on': False
-			})
-			
-			cherrypy.quickstart(WebhookServer(), '/', {'/': {}})
-	else:
-		if __name__ == "__main__":
-			bot.remove_webhook()
-			bot.polling(none_stop=True)
+
+if __name__ == "__main__":
+	bot.remove_webhook()
+	bot.polling(none_stop=True)
