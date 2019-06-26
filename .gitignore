@@ -1,0 +1,8 @@
+.idea/
+__pycache__/
+States/
+*.db
+*Media/
+*venv_ubuntu/
+*myenv/
+
