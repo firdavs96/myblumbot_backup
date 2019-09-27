@@ -17,8 +17,10 @@ import time
 bot = telebot.TeleBot(config.token)
 
 
-def post(messages, user_list):
+def post(messages, user_list, author_id=None):
 	print("Рассылка начата")
+	if author_id:
+		bot.send_message(author_id, "Рассылка начата")
 	for uid in user_list:
 		try:
 			for message in messages:
@@ -39,10 +41,12 @@ def post(messages, user_list):
 					bot.send_audio(uid, message.audio.file_id, caption=message.caption, disable_notification=True)
 			utils.user_unblocked_bot(uid)
 		except Exception as e:
-			print("Exception in post func: ", e)
+			print("Exception in post func: ", e, "id:", uid)
 			utils.user_blocked_bot(uid)
 		time.sleep(0.5)
 	print("Рассылка закончена")
+	if author_id:
+		bot.send_message(author_id, "Рассылка закончена")
 
 
 # *****************************************************************************************************
@@ -589,7 +593,7 @@ def make_post(message):
 
 		if message.text == db.get_buttons('post_button', lang=lang)[0]:
 			user_ids = db.get_user_ids()
-			pub_thread = Thread(target=post, args=(states[uid]['post'], user_ids))
+			pub_thread = Thread(target=post, args=(states[uid]['post'], user_ids), kwargs={'author_id':uid})
 			pub_thread.start()
 			states[uid] = {'cur': 'main_menu', 'path': ['main_menu']}
 			text = db.get_message(states[uid]['cur'], lang=lang)
@@ -1212,7 +1216,7 @@ def asd(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO Обработка толщины фасада
+# Обработка толщины фасада
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'thickness_hull_choose_menu')
 def asd(message):
 	with SQLighter() as db, Shelver().conn as states:
@@ -1240,7 +1244,7 @@ def asd(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO Обработка высоты фасада
+# Обработка высоты фасада
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'height_facade_choose_menu')
 def asd(message):
 	with SQLighter() as db, Shelver().conn as states:
