@@ -1079,6 +1079,7 @@ def handle_height_choose(message):
 		if not message.text.isdigit():
 			text = db.get_message('input_only_number_message', lang=lang)
 			bot.send_message(uid, text, parse_mode='HTML')
+			return
 
 		if 'aventos' not in states[uid]:
 			log(uid, "'aventos' not in states[{}]".format(uid), func_name=sys._getframe().f_code.co_name)
