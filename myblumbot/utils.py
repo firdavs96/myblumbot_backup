@@ -26,7 +26,7 @@ def state(uid):
 		if uid in states:
 			try:
 				return states[uid]['cur']
-			except:
+			except KeyError:
 				return None
 		else:
 			return None

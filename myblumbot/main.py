@@ -120,7 +120,7 @@ def not_in_states_filter(m):
 		return str(m.from_user.id) not in states
 
 
-# TODO хэндлер на случай, если пользователя нету в состояних
+# хэндлер на случай, если пользователя нету в состояних
 @bot.message_handler(func=not_in_states_filter)
 def first_handler(message):
 	uid = str(message.from_user.id)
