@@ -184,7 +184,7 @@ def first_menu(message):
 def lang_menu_filter_2(m):
 	with SQLighter() as db, Shelver().conn as states:
 		user_id = str(m.from_user.id)
-		return db.has_user(user_id) and not db.has_phone(user_id) and not_in_states_filter(m)
+		return db.has_user(user_id) and not db.has_phone(user_id) and user_id not in states
 
 
 # TODO Меню выбора языка. Выводит запрос контакта.
