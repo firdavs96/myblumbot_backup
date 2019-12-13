@@ -15,7 +15,7 @@ import os
 from threading import Thread
 import time
 
-bot = telebot.TeleBot(config.token)
+bot = telebot.TeleBot(config.token, threaded=False)
 
 
 def post(messages, user_list, author_id=None):
