@@ -3,7 +3,7 @@
 TEST_CONFIG = 0
 
 if TEST_CONFIG:
-	token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8' # @BlumUz_bot
+	token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8'  # @BlumUz_bot
 	# token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'  # @MyBlumBot
 	database_name = '../BlumUz.db'
 	bot_name = '@BlumUz_bot'
@@ -11,11 +11,12 @@ if TEST_CONFIG:
 	shelve_name = './States/{0}_user_states'.format(bot_name[1:])
 	users_excel_filename = "../users.xlsx"
 else:
+	base_dir = '/home/ubuntu/bots/myblumbot'
 	token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'
-	database_name = '/usr/share/apps/bots/myblumbot/BlumUz.db'
+	database_name = f'{base_dir}/BlumUz.db'
 	bot_name = '@MyBlumBot'
-	shelve_name = '/usr/share/apps/bots/myblumbot/bot/States/{0}_user_states'.format(bot_name[1:])
-	users_excel_filename = "/usr/share/apps/bots/myblumbot/users.xlsx"
+	shelve_name = f'{base_dir}/bot/States/{bot_name[1:]}_user_states'
+	users_excel_filename = f'{base_dir}/users.xlsx'
 
 languages = {'ru', 'uz'}
 density = {'MДФ 18': 760, 'МДФ 16': 760, 'ДСП 18': 680, 'ДСП 16': 680,
