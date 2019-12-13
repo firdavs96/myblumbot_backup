@@ -8,3 +8,4 @@ States/
 *Media/
 *venv_ubuntu/
 *myenv/
+.env
