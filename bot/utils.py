@@ -1,10 +1,10 @@
 # -*-coding: utf-8 -*-
-from sqlighter import SQLighter
-from shelver import Shelver
-import config
-from config import shelve_name
+from bot.sqlighter import SQLighter
+from bot.shelver import Shelver
+import bot.config as config
+from bot.config import shelve_name
 import time
-import excel
+import bot.excel as excel
 
 
 def get_fullname_username(message) -> (str, str):
@@ -157,4 +157,3 @@ def user_blocked_bot(uid):
 def user_unblocked_bot(uid):
 	with SQLighter() as db:
 		db.user_unblocked_bot(uid)
-

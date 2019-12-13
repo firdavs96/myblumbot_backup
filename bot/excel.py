@@ -1,7 +1,7 @@
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl import Workbook
-from sqlighter import SQLighter
+from bot.sqlighter import SQLighter
 
 def write_messages():
 	with SQLighter() as db:

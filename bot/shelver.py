@@ -1,7 +1,7 @@
 # -*-coding: utf-8 -*-
 
 import shelve
-import config
+import bot.config as config
 
 
 class Shelver(object):

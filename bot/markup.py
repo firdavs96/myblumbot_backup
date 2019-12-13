@@ -1,8 +1,8 @@
 # -*-coding: utf-8 -*-
 
-from sqlighter import SQLighter
+from bot.sqlighter import SQLighter
 from telebot import types
-import config
+import bot.config as config
 
 
 def markup(db, cur_step, *, lang=None):

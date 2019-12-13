@@ -2,7 +2,7 @@
 import sqlite3
 import time
 from datetime import datetime
-import config
+import bot.config as config
 
 
 class SQLighter:

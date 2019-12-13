@@ -1,15 +1,16 @@
 # -*-coding: utf-8 -*-
 
-import config
 import telebot
-from shelver import Shelver
-import utils
-from utils import state
-from utils import log
-from markup import markup
-from sqlighter import SQLighter
 import sys
-import excel
+
+import bot.config as config
+from bot.shelver import Shelver
+import bot.utils as utils
+from bot.utils import state
+from bot.utils import log
+from bot.markup import markup
+from bot.sqlighter import SQLighter
+import bot.excel
 import os
 from threading import Thread
 import time
