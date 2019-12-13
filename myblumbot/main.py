@@ -115,9 +115,19 @@ def banned(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
+def not_in_states(m):
+	uid = str(m.from_user.id)
+	shelver = Shelver()
+	if uid not in shelver.conn:
+		shelver.close()
+		return True
+	else:
+		shelver.close()
+		return False
+
 
 # хэндлер на случай, если пользователя нету в состояних
-@bot.message_handler(func=lambda m: state(str(m.from_user.id)) is None)
+@bot.message_handler(func=not_in_states)
 def first_handler(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
