@@ -3,14 +3,14 @@
 import telebot
 import sys
 
-import bot.config as config
-from bot.shelver import Shelver
-import bot.utils as utils
-from bot.utils import state
-from bot.utils import log
-from bot.markup import markup
-from bot.sqlighter import SQLighter
-import bot.excel
+import myblumbot.config as config
+from myblumbot.shelver import Shelver
+import myblumbot.utils as utils
+from myblumbot.utils import state
+from myblumbot.utils import log
+from myblumbot.markup import markup
+from myblumbot.sqlighter import SQLighter
+import myblumbot.excel as excel
 import os
 from threading import Thread
 import time
@@ -234,12 +234,15 @@ def lang_menu(message):
 # TODO Меню отправки контакта. Выводит стартовое меню.
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'send_phone_menu', content_types=['text', 'contact'])
 def phone_menu(message):
+	uid = str(message.from_user.id)
+	if message.text:
+		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
+	elif message.contact:
+		log(uid, "phone: +" + message.contact.phone_number)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
 		lang = db.get_lang(uid)
 
 		if message.text and db.has_phone(uid):
-			log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 			states[uid]['cur'] = 'main_menu'
 			states[uid]['path'] = [states[uid]['cur']]
 			m = markup(db, states[uid]['cur'], lang=lang)
@@ -248,7 +251,6 @@ def phone_menu(message):
 			return
 
 		elif message.text and not db.has_phone(uid):
-			log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 			states[uid]['cur'] = 'send_phone_menu'
 			states[uid]['path'] = [states[uid]['cur']]
 			text = db.get_message("wrong_contact", lang=lang)
@@ -257,7 +259,6 @@ def phone_menu(message):
 			return
 
 		else:
-			log(uid, "phone: +" + message.contact.phone_number)
 			if not db.has_user(uid) or db.get_lang(uid) not in config.languages:
 				states[uid] = {'cur': 'lang_menu', 'path': ['lang_menu']}
 				m = markup(db, states[uid]['cur'])
@@ -267,7 +268,6 @@ def phone_menu(message):
 
 			if str(message.contact.user_id) == uid:
 				phone = message.contact.phone_number
-
 				db.set_phone(uid, phone)
 				states[uid]['cur'] = 'main_menu'
 				states[uid]['path'] = [states[uid]['cur']]
@@ -285,20 +285,20 @@ def phone_menu(message):
 @bot.message_handler(func=lambda m: not SQLighter().has_phone(str(m.from_user.id)),
 					 content_types=['text', 'contact'])
 def phone_menu(message):
+	uid = str(message.from_user.id)
+	if message.text:
+		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
+	elif message.contact:
+		log(uid, message.contact.phone_number, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
 		lang = db.get_lang(uid)
-
 		if not lang or not db.has_user(uid):
-			log(uid, "User {} has no lang".format(uid), func_name=sys._getframe().f_code.co_name)
 			states[uid] = {'cur': 'lang_menu', 'path': ['lang_menu']}
 			m = markup(db, states[uid]['cur'])
 			text = db.get_message(states[uid]['cur'])[0]
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
 			return
-
 		if message.text:
-			log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 			states[uid]['cur'] = 'send_phone_menu'
 			states[uid]['path'] = [states[uid]['cur']]
 			text = db.get_message("wrong_contact", lang=lang)
@@ -306,9 +306,7 @@ def phone_menu(message):
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
 		else:
 			if str(message.contact.user_id) == uid:
-				log(uid, "phone: +" + message.contact.phone_number, func_name=sys._getframe().f_code.co_name)
 				phone = message.contact.phone_number
-
 				db.set_phone(uid, phone)
 				states[uid]['cur'] = 'main_menu'
 				states[uid]['path'] = [states[uid]['cur']]
@@ -316,7 +314,6 @@ def phone_menu(message):
 				sticker_id = db.get_message(states[uid]['cur'] + "_sticker", lang=lang)
 				bot.send_sticker(uid, sticker_id, reply_markup=m)
 			else:
-				log(uid, "Wrong contact from {0}".format(uid), func_name=sys._getframe().f_code.co_name)
 				text = db.get_message('wrong_contact', lang=lang)
 				bot.send_message(uid, text, parse_mode='HTML')
 
@@ -336,9 +333,9 @@ def main_menu_filter(m):
 @bot.message_handler(func=lambda m: m.text in SQLighter().get_buttons('main_menu_button'))
 @bot.message_handler(func=main_menu_filter)
 def main_menu(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if db.is_stopped_bot(uid):
@@ -356,9 +353,9 @@ def main_menu(message):
 # TODO обработка кнопки Назад
 @bot.message_handler(func=lambda m: m.text in SQLighter().get_buttons('back_button'))
 def back_handler(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if states[uid]['cur'] == 'aventos_choose_menu':
 			states[uid] = {'cur': 'main_menu', 'path': ['main_menu']}
@@ -455,13 +452,13 @@ def back_handler(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO админка
+# админка
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id)),
 					 commands=['help', 'stats', 'ban', 'unban', 'post', 'change_price'])
 def handle_admin_message(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if message.text == '/help':
@@ -553,9 +550,9 @@ def handle_admin_message(message):
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'post_menu',
 					 content_types=['document', 'photo', 'video', 'audio', 'sticker', 'location', 'text'])
 def media_post_handler(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if message.text and message.text == db.get_buttons('post_button', lang=lang)[0]:
@@ -587,14 +584,14 @@ def media_post_handler(message):
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'make_post?')
 def make_post(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if message.text == db.get_buttons('post_button', lang=lang)[0]:
 			user_ids = db.get_user_ids()
-			pub_thread = Thread(target=post, args=(states[uid]['post'], user_ids), kwargs={'author_id':uid})
+			pub_thread = Thread(target=post, args=(states[uid]['post'], user_ids), kwargs={'author_id': uid})
 			pub_thread.start()
 			states[uid] = {'cur': 'main_menu', 'path': ['main_menu']}
 			text = db.get_message(states[uid]['cur'], lang=lang)
@@ -614,9 +611,9 @@ def make_post(message):
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'change_price_menu')
 def change_price_menu(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		categories = db.get_buttons('catalog_menu', lang='ru') + db.get_buttons('full_price_button', lang='ru')
 		if message.text in categories:
@@ -632,9 +629,9 @@ def change_price_menu(message):
 									and 'new_price_category' in Shelver().conn[str(m.from_user.id)],
 					 content_types=['document'])
 def document_handler(message):
+	uid = str(message.from_user.id)
+	log(uid, "New price list: " + message.document.file_id, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, "New price list: " + message.document.file_id, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		new_price_file_id = message.document.file_id
@@ -669,9 +666,9 @@ def is_in_main_menu_state(m):
 # TODO Обработка кнопок главного меню
 @bot.message_handler(func=is_in_main_menu_state)
 def handle_main_menu(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if message.text == db.get_buttons('calculator_button', lang=lang)[0]:
@@ -734,22 +731,15 @@ def handle_main_menu(message):
 			bot.send_sticker(uid, sticker_id, reply_markup=m)
 
 
-# elif message.text == db.get_buttons('change_phone_button', lang=lang)[0]:
-# 	states[uid] = {'cur': 'send_phone_menu', 'path': ['send_phone_menu']}
-# 	m = markup(db, states[uid]['cur'], lang=lang)
-# 	text = db.get_message(states[uid]['cur'], lang=lang)
-# 	bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
-
-
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO Обработка кнопок прайс меню
+# Обработка кнопок прайс меню
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'price_menu')
 def handle_price_menu(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if message.text in db.get_buttons('full_price_list', lang=lang) + db.get_buttons('catalog_menu', lang=lang):
@@ -775,9 +765,9 @@ def handle_price_menu(message):
 		m.text,
 		SQLighter().get_lang(str(m.from_user.id))))
 def handle_first_catalog_menu(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if (db.has_instruction(message.text, lang=lang) and message.text in db.finaly_dirs()) \
@@ -894,9 +884,9 @@ def full_instruction_filter_2(m):
 @bot.message_handler(func=full_instruction_filter_1)
 @bot.message_handler(func=full_instruction_filter_2)
 def handle_full_instruction(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if states[uid]['cur'] == 'recomendation_menu':
@@ -944,9 +934,9 @@ def handle_full_instruction(message):
 																		  lang=SQLighter().get_lang(
 																			  str(m.from_user.id))))
 def handle_setting_button(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		video = db.get_buttons('aventos_setting_' + states[uid]['aventos'])[0]
@@ -967,9 +957,9 @@ def handle_setting_button(message):
 																		  lang=SQLighter().get_lang(
 																			  str(m.from_user.id)))[0])
 def handle_continue_button(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		db.user_continued(uid)
@@ -994,9 +984,9 @@ def handle_continue_button(message):
 # TODO Обработка выбора авентоса
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'aventos_choose_menu')
 def handle_aventos_choose(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		# if message.text in db.get_buttons('aventos_choose_menu', lang=lang):
 		if message.text in db.get_mechanism_types():
@@ -1016,9 +1006,9 @@ def handle_aventos_choose(message):
 # TODO Обработка выбора материала и толщины
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'material_choose_menu')
 def handle_material_choose(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if message.text in db.get_buttons('material_choose_menu', lang=lang):
 			states[uid]['material'] = message.text
@@ -1037,9 +1027,9 @@ def handle_material_choose(message):
 # TODO обработка ввода высоты корпуса
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'height_choose_menu')
 def handle_height_choose(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 
 		if not message.text.isdigit():
@@ -1048,7 +1038,6 @@ def handle_height_choose(message):
 			return
 
 		if 'aventos' not in states[uid]:
-			log(uid, "'aventos' not in states[{}]".format(uid), func_name=sys._getframe().f_code.co_name)
 			send_error_and_change_state(bot, states, uid, db)
 			return
 
@@ -1077,9 +1066,9 @@ def handle_height_choose(message):
 # TODO Обработка ввода ширины корпуса
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'width_choose_menu')
 def handle_height_choose(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if not message.text.isdigit():
 			text = db.get_message('input_only_number_message', lang=lang)
@@ -1087,7 +1076,6 @@ def handle_height_choose(message):
 			return
 
 		if 'aventos' not in states[uid]:
-			log(uid, "'aventos' not in states[{}]".format(uid), func_name=sys._getframe().f_code.co_name)
 			send_error_and_change_state(bot, states, uid, db)
 			return
 
@@ -1188,9 +1176,9 @@ def handle_height_choose(message):
 # TODO После рекомендации
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'recomendation_menu')
 def asd(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if message.text in db.get_buttons('change_parameters'):
 			states[uid]['cur'] = 'material_choose_menu'
@@ -1220,9 +1208,9 @@ def asd(message):
 # Обработка толщины фасада
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'thickness_hull_choose_menu')
 def asd(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if message.text not in ('16', '18'):
 			text = db.get_message('choose_menu_button', lang=lang)
@@ -1248,9 +1236,9 @@ def asd(message):
 # Обработка высоты фасада
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'height_facade_choose_menu')
 def asd(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if not message.text.isdigit():
 			text = db.get_message('input_only_number_message', lang=lang)
@@ -1273,9 +1261,9 @@ def asd(message):
 # TODO Обработка ширины фасада
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'width_facade_choose_menu')
 def asd(message):
+	uid = str(message.from_user.id)
+	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 	with SQLighter() as db, Shelver().conn as states:
-		uid = str(message.from_user.id)
-		log(uid, message.text, func_name=sys._getframe().f_code.co_name)
 		lang = db.get_lang(uid)
 		if not message.text.isdigit():
 			text = db.get_message('input_only_number_message', lang=lang)

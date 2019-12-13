@@ -1,7 +1,7 @@
 # -*-coding: utf-8 -*-
 
 import shelve
-import bot.config as config
+import myblumbot.config as config
 
 
 class Shelver(object):

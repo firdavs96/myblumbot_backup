@@ -1,10 +1,10 @@
 # -*-coding: utf-8 -*-
-from bot.sqlighter import SQLighter
-from bot.shelver import Shelver
-import bot.config as config
-from bot.config import shelve_name
+from myblumbot.sqlighter import SQLighter
+from myblumbot.shelver import Shelver
+import myblumbot.config as config
+from myblumbot.config import shelve_name
 import time
-import bot.excel as excel
+import myblumbot.excel as excel
 
 
 def get_fullname_username(message) -> (str, str):

@@ -1,13 +1,14 @@
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl import Workbook
-from bot.sqlighter import SQLighter
+from myblumbot.sqlighter import SQLighter
+
 
 def write_messages():
 	with SQLighter() as db:
 		tmp = db.get_ru_messages()
 		file_name = "../Texts.xlsx"
-		
+
 		wb = Workbook()
 		ws1 = wb.active
 		ws1.title = "Messages"
@@ -23,9 +24,8 @@ def save_users_to_file(filename):
 		wb = Workbook()
 		ws1 = wb.active
 		ws1.title = "Users"
-		ws1.append(["user_id", "fullname", "username", "phone", "lang", "is_admin", "is_banned", "stopped_bot", "registration_date"])
+		ws1.append(["user_id", "fullname", "username", "phone", "lang", "is_admin", "is_banned", "stopped_bot",
+					"registration_date"])
 		for user in users:
 			ws1.append(user)
 		wb.save(filename=filename)
-
-	
