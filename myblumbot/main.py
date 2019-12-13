@@ -115,10 +115,6 @@ def banned(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-def not_in_states_filter(m):
-	with Shelver().conn as states:
-		return str(m.from_user.id) not in states
-
 
 # хэндлер на случай, если пользователя нету в состояних
 @bot.message_handler(func=lambda m: state(str(m.from_user.id) is None))
@@ -322,9 +318,15 @@ def phone_menu(message):
 # *****************************************************************************************************
 
 def main_menu_filter(m):
-	with SQLighter() as db:
+	with SQLighter() as db, Shelver().conn as states:
 		user_id = str(m.from_user.id)
-		return db.has_user(user_id) and db.has_phone(user_id) and not_in_states_filter(m)
+		if not db.has_user(user_id):
+			return False
+		if not db.has_phone(user_id):
+			return False
+		if not str(m.from_user.id) not in states:
+			return False
+		return True
 
 
 # TODO Выводит стартовое меню
