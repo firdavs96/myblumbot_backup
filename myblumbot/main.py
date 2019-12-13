@@ -117,7 +117,7 @@ def banned(message):
 
 
 # хэндлер на случай, если пользователя нету в состояних
-@bot.message_handler(func=lambda m: state(str(m.from_user.id) is None))
+@bot.message_handler(func=lambda m: state(str(m.from_user.id)) is None)
 def first_handler(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
