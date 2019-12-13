@@ -15,7 +15,10 @@ class Shelver(object):
 	def __enter__(self):
 		return self
 
-	def __exit__(self, Type, Value, Trace):
+	def __exit__(self, type, value, trace):
+		print(type)
+		print(value)
+		print(trace)
 		self.close()
 
 	def clear_shelve(self, shelve_name=None):

@@ -22,10 +22,10 @@ def get_lang(uid):
 
 
 def state(uid):
-	with Shelver().conn as states:
-		if uid in states:
+	with Shelver() as states:
+		if uid in states.conn:
 			try:
-				return states[uid]['cur']
+				return states.conn[uid]['cur']
 			except KeyError:
 				return None
 		else:
