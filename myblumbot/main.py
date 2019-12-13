@@ -875,7 +875,7 @@ def full_instruction_filter_1(m):
 		if not states.get(user_id) or 'aventos' not in states.get(user_id):
 			return False
 		user_lang = db.get_lang(user_id)
-		s = state(user_id)
+		s = states[user_id]['cur']
 		buttons = db.get_buttons('full_instruction_button', lang=user_lang)
 		has_instr = db.has_instruction(states[user_id]['aventos'], lang=user_lang)
 		return s == 'recomendation_menu' and m.text in buttons and has_instr
