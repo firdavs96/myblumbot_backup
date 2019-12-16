@@ -3,6 +3,8 @@
 import telebot
 import sys
 
+from telebot.types import Message
+
 import myblumbot.config as config
 from myblumbot.shelver import Shelver
 import myblumbot.utils as utils
@@ -95,11 +97,14 @@ def fa(message):
 # 	bot.send_document(message.from_user.id, message.document.file_id, caption=message.document.file_id)
 # 	print(message.document.file_id)
 
-# *****************************************************************************************************
-# *****************************************************************************************************
+def banned_filter(message: Message):
+	with SQLighter() as db:
+		uid = str(message.from_user.id)
+		return db.is_banned(uid) and not db.is_admin(uid)
 
-@bot.message_handler(func=lambda m: SQLighter().is_banned(str(m.from_user.id))
-									and not SQLighter().is_admin(str(m.from_user.id)))
+
+# @check_user_in_db
+@bot.message_handler(func=banned_filter)
 def banned(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
@@ -126,7 +131,7 @@ def not_in_states(m):
 		return False
 
 
-# хэндлер на случай, если пользователя нету в состояних
+# хэндлер на случай, если пользователя нету в состояниях
 @bot.message_handler(func=not_in_states)
 def first_handler(message):
 	uid = str(message.from_user.id)
@@ -144,29 +149,38 @@ def first_handler(message):
 			m = markup(db, states[uid]['cur'])
 			text = db.get_message(states[uid]['cur'])[0]
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
+			return
 
-		elif not db.has_phone(uid):
+		if not db.has_phone(uid):
 			lang = db.get_lang(uid)
 			states[uid] = {'cur': 'send_phone_menu', 'path': ['send_phone_menu']}
 			full_name, _ = utils.get_fullname_username(message)
 			text = db.get_message(states[uid]['cur'], lang=lang).format(full_name)
 			m = markup(db, states[uid]['cur'], lang=lang)
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
+			return
 
-		else:
-			lang = db.get_lang(uid)
-			states[uid] = {'cur': 'main_menu', 'path': ['main_menu']}
-			m = markup(db, states[uid]['cur'], lang=lang)
-			text = db.get_message(states[uid]['cur'] + "_sticker", lang=lang)
-			bot.send_sticker(uid, text, reply_markup=m)
+		lang = db.get_lang(uid)
+		states[uid] = {'cur': 'main_menu', 'path': ['main_menu']}
+		m = markup(db, states[uid]['cur'], lang=lang)
+		text = db.get_message(states[uid]['cur'] + "_sticker", lang=lang)
+		bot.send_sticker(uid, text, reply_markup=m)
 
 
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO Выводит меню языка
-@bot.message_handler(func=lambda m: utils.get_lang(str(m.from_user.id)) not in config.languages
-									and state(str(m.from_user.id)) != 'lang_menu')
+def lang_menu_filter(m: Message):
+	with SQLighter() as db:
+		uid = str(m.from_user.id)
+		if db.get_lang(uid) not in config.languages \
+				and state(uid) != 'lang_menu':
+			return True
+		return False
+
+
+# Выводит меню языка
+@bot.message_handler(func=lang_menu_filter)
 def first_menu(message):
 	uid = str(message.from_user.id)
 	log(uid, message.text, func_name=sys._getframe().f_code.co_name)
@@ -193,7 +207,7 @@ def lang_menu_filter_2(m):
 		return db.has_user(user_id) and not db.has_phone(user_id) and user_id not in states
 
 
-# TODO Меню выбора языка. Выводит запрос контакта.
+# Меню выбора языка. Выводит запрос контакта.
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'lang_menu')
 @bot.message_handler(func=lang_menu_filter_2)
 def lang_menu(message):
@@ -892,7 +906,7 @@ def full_instruction_filter_2(m):
 	return m.text in buttons and state(user_id) != 'aventos_choose_menu' and has_instr
 
 
-# TODO Обработка кнопки Полная инструкция
+# Обработка кнопки Полная инструкция
 @bot.message_handler(func=full_instruction_filter_1)
 @bot.message_handler(func=full_instruction_filter_2)
 def handle_full_instruction(message):
