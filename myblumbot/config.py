@@ -23,12 +23,16 @@ if TEST_CONFIG:
 	# bot_name = '@MyBlumBot'
 	shelve_name = os.path.join(BASE_DIR, 'States', f'{bot_name[1:]}_user_states')
 	users_excel_filename = os.path.join(BASE_DIR, 'users.xlsx')
+	sentry_on = False
+	sentry_dns = ""
 else:
 	token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'
 	database_name = os.path.join(BASE_DIR, 'BlumUz.db')
 	bot_name = '@MyBlumBot'
 	shelve_name = os.path.join(BASE_DIR, 'States', f'{bot_name[1:]}_user_states')
 	users_excel_filename = os.path.join(BASE_DIR, 'users.xlsx')
+	sentry_on = True
+	sentry_dns = "https://0196dc6c696344ab9e48796c1171e432@sentry.io/1858233"
 
 languages = {'ru', 'uz'}
 density = {'MДФ 18': 760, 'МДФ 16': 760, 'ДСП 18': 680, 'ДСП 16': 680,

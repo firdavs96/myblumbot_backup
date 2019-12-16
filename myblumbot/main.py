@@ -16,7 +16,10 @@ import myblumbot.excel as excel
 import os
 from threading import Thread
 import time
+import sentry_sdk
 
+if config.sentry_on:
+	sentry_sdk.init(config.sentry_dns)
 bot = telebot.TeleBot(config.token, threaded=False)
 
 
