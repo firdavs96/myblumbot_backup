@@ -254,7 +254,7 @@ def lang_menu(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO Меню отправки контакта. Выводит стартовое меню.
+# Меню отправки контакта. Выводит стартовое меню.
 @bot.message_handler(func=lambda m: state(str(m.from_user.id)) == 'send_phone_menu', content_types=['text', 'contact'])
 def phone_menu(message):
 	uid = str(message.from_user.id)
@@ -356,7 +356,7 @@ def main_menu_filter(m):
 		return True
 
 
-# TODO Выводит стартовое меню
+# Выводит стартовое меню
 @bot.message_handler(func=lambda m: utils.get_lang(str(m.from_user.id)) in config.languages
 									and m.text == '/start')
 @bot.message_handler(func=lambda m: m.text in SQLighter().get_buttons('main_menu_button'))
@@ -379,7 +379,7 @@ def main_menu(message):
 # *****************************************************************************************************
 # *****************************************************************************************************
 
-# TODO обработка кнопки Назад
+# обработка кнопки Назад
 @bot.message_handler(func=lambda m: m.text in SQLighter().get_buttons('back_button'))
 def back_handler(message):
 	uid = str(message.from_user.id)
@@ -574,7 +574,7 @@ def handle_admin_message(message):
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
 
 
-# TODO Обработка файлов
+# Обработка файлов
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'post_menu',
 					 content_types=['document', 'photo', 'video', 'audio', 'sticker', 'location', 'text'])
@@ -636,7 +636,7 @@ def make_post(message):
 			return
 
 
-# TODO Выбор прайса для изменения
+# Выбор прайса для изменения
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'change_price_menu')
 def change_price_menu(message):
@@ -652,7 +652,7 @@ def change_price_menu(message):
 			bot.send_message(uid, text, reply_markup=m, parse_mode='HTML')
 
 
-# TODO Обработка и обновление ссылки прайс-листа
+# Обработка и обновление ссылки прайс-листа
 @bot.message_handler(func=lambda m: SQLighter().is_admin(str(m.from_user.id))
 									and Shelver().conn[str(m.from_user.id)]['cur'] == 'change_price_menu'
 									and 'new_price_category' in Shelver().conn[str(m.from_user.id)],
@@ -692,7 +692,7 @@ def is_in_main_menu_state(m):
 	return state(str(m.from_user.id)) == 'main_menu'
 
 
-# TODO Обработка кнопок главного меню
+# Обработка кнопок главного меню
 @bot.message_handler(func=is_in_main_menu_state)
 def handle_main_menu(message):
 	uid = str(message.from_user.id)
