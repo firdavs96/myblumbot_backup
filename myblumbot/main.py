@@ -72,33 +72,41 @@ def send_error_and_change_state(bot, states, uid, db):
 @bot.message_handler(func=lambda m: str(m.from_user.id) != '3235063' and config.TEST_CONFIG)
 def fa(message):
 	print(message.from_user.id, ' trying connect to bot')
+	bot.send_message(
+		message.chat.id,
+		"Приносим извинения за неудобства, бот временно недоступен. "
+		"Пожалуйста, повторите через несколько минут."
+	)
 
 
 #
-# @bot.message_handler(content_types=['sticker'])
+# @bot.message_handler(lambda m: config.TEST_CONFIG, content_types=['sticker'])
 # def asd(message):
 # 	print('Sticker')
 # 	bot.send_sticker(message.from_user.id, message.sticker.file_id)
 # 	bot.send_message(message.from_user.id, message.sticker.file_id)
 # 	print(message.sticker.file_id)
 #
-# @bot.message_handler(content_types=['video'])
-# def asd(message):
-# 	print('Video')
-# 	bot.send_video(message.from_user.id, message.video.file_id, caption=message.video.file_id)
-# 	print(message.video.file_id)
-#
-# @bot.message_handler(content_types=['photo'])
-# def asd(message):
-# 	print('Photo')
-# 	bot.send_photo(message.from_user.id, message.photo[0].file_id, caption=message.photo[0].file_id)
-# 	print(message.photo[0].file_id)
-#
-# @bot.message_handler(content_types=['document'])
-# def asd(message):
-# 	print('Document')
-# 	bot.send_document(message.from_user.id, message.document.file_id, caption=message.document.file_id)
-# 	print(message.document.file_id)
+@bot.message_handler(func=lambda m: config.TEST_CONFIG, content_types=['video'])
+def video_callback(message):
+	print('Video')
+	bot.send_video(message.from_user.id, message.video.file_id, caption=message.video.file_id)
+	print(message.video.file_id)
+
+
+@bot.message_handler(func=lambda m: config.TEST_CONFIG, content_types=['photo'])
+def photo_callback(message):
+	print('Photo')
+	bot.send_photo(message.from_user.id, message.photo[0].file_id, caption=message.photo[0].file_id)
+	print(message.photo[0].file_id)
+
+
+@bot.message_handler(func=lambda m: config.TEST_CONFIG, content_types=['document'])
+def document_callback(message):
+	print('Document')
+	bot.send_document(message.from_user.id, message.document.file_id, caption=message.document.file_id)
+	print(message.document.file_id)
+
 
 def banned_filter(message: Message):
 	with SQLighter() as db:
