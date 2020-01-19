@@ -72,7 +72,7 @@ def compute_x_y(aventos, a, b, c, d, e, f, lever_value=None):
 		y = [(d - (c - f) / 2) + 12.5 for _ in range(len(x))]
 		return x, y
 
-	if aventos == 'AVENTOS HK':
+	if aventos == 'AVENTOS HK top':
 		x = 69 - (b - e) / 2
 		y = d - (c - f) / 2 + 12.5
 		return x, y

@@ -3,8 +3,8 @@ import logging
 import os
 import sys
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-logging.basicConfig(stream=sys.stderr, level=logging.WARN)
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# logging.basicConfig(stream=sys.stderr, level=logging.WARN)
 
 if os.environ.get('ENV') == 'DEV':
 	TEST_CONFIG = True
@@ -42,7 +42,7 @@ height_boundaries = {
 	'AVENTOS HF': {'min': 480, 'max': 1040},
 	'AVENTOS HS': {'min': 350, 'max': 800},
 	'AVENTOS HL': {'min': 300, 'max': 580},
-	'AVENTOS HK': {'min': 200, 'max': 600},
+	'AVENTOS HK top': {'min': 200, 'max': 600},
 	'AVENTOS HK-S': {'min': 180, 'max': 400},
 	'AVENTOS HK-XS': {'min': 240, 'max': 600},
 	'AVENTOS HK-XS TIP-ON': {'min': 240, 'max': 600}
@@ -51,7 +51,7 @@ width_boundaries = {
 	'AVENTOS HF': {'min': 220, 'max': 1800},
 	'AVENTOS HS': {'min': 220, 'max': 1800},
 	'AVENTOS HL': {'min': 220, 'max': 1800},
-	'AVENTOS HK': {'min': 220, 'max': 1800}
+	'AVENTOS HK top': {'min': 220, 'max': 1800}
 }
 
 mechanism_with_height_parameter = ('AVENTOS HL', 'AVENTOS HS')
