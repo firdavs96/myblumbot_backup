@@ -24,6 +24,8 @@ bot = telebot.TeleBot(config.token, threaded=False)
 
 
 def post(messages, user_list, author_id=None):
+	if config.TEST_CONFIG:
+		user_list = [3235063, 694046590, 506209663]
 	print("Рассылка начата")
 	if author_id:
 		bot.send_message(author_id, "Рассылка начата")
