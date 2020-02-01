@@ -1,5 +1,5 @@
 TIME=$(date +%b-%d-%y)
-export $(grep -v '^#' /home/ubuntu/bots/myblumbot_backup/.env | xargs)
+export $(grep -v '^#' /root/myblum/.env | xargs)
 FILENAME=backup-$TIME.tar.gz
 SRCDIR=$ROOT_DIR/BlumUz.db
 DESDIR=$ROOT_DIR/db_backups

@@ -9,3 +9,4 @@ States/
 *venv_ubuntu/
 *myenv/
 .env
+.vscode/
