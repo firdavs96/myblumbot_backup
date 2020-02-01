@@ -16,11 +16,11 @@ else:
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if TEST_CONFIG:
-	# token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8'  # @BlumUz_bot
-	token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'  # @MyBlumBot
+	token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8'  # @BlumUz_bot
+	# token = '368421686:AAGnaXnbA9WUMM-xacTHgpPcfewELvT_yC0'  # @MyBlumBot
 	database_name = os.path.join(BASE_DIR, 'BlumUz.db')
-	# bot_name = '@BlumUz_bot'
-	bot_name = '@MyBlumBot'
+	bot_name = '@BlumUz_bot'
+	#bot_name = '@MyBlumBot'
 	shelve_name = os.path.join(BASE_DIR, 'States', f'{bot_name[1:]}_user_states')
 	users_excel_filename = os.path.join(BASE_DIR, 'users.xlsx')
 	sentry_on = False
