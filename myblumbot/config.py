@@ -14,6 +14,7 @@ else:
 	raise ValueError("'ENV' environment variable should be 'DEV' or 'PROD'")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEVELOPER_ID = '97415080' # firdavs996
 
 if TEST_CONFIG:
 	token = '406265614:AAHjHg7adE8a2ocF9GwakJ6dhvf8eZBrPG8'  # @BlumUz_bot
